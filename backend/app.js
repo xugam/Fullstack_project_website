@@ -3,18 +3,30 @@ import dotenv from "dotenv";
 import { connectDB } from "./config/db.js";
 import  productRoutes  from "./routes/product.route.js";
 
-dotenv.config();
-
-const app = express()
+ dotenv.config();
+const app = express();
 const PORT = process.env.PORT || 3000; // Use PORT from .env or default to 3000
 
 app.use(express.json());//allows to use json data in req.body
 
+
+app.get("/", (req, res) => {
+  res.send("Hello from backend!");
+  console.log("Hello from backend!");
+});
+
 app.use("/api/products", productRoutes); // Use the product routes
 
-//console.log(process.env.MONGO_URI);
+console.log(PORT);
 
-app.listen(PORT,()=>{
-    connectDB();
-    console.log("Server started at http://localhost:" + PORT);  
-});
+console.log(process.env.MONGO_URI);
+
+connectDB()
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`Server started at http://localhost:${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error("DB connection failed", err.message);
+  });
